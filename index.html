@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>boos — an operating system where a model makes the apps</title>
+<meta name="description" content="You do not install apps. You ask for one, and a model writes it. boos is the beginning of that operating system: a kernel written from nothing in Rust, for x86-64 PCs, with no bootloader underneath.">
+<link rel="canonical" href="https://boosai.tech/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="boos — an operating system where a model makes the apps">
+<meta property="og:description" content="A kernel written from nothing in Rust. Apps are scripts a model writes, run locked in a box.">
+<meta property="og:url" content="https://boosai.tech/">
+<meta name="theme-color" content="#00285a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 11'><rect width='9' height='11' fill='%2300285a'/><g fill='%23ff9600'><rect x='2' y='2' width='1' height='1'/><rect x='2' y='3' width='1' height='1'/><rect x='2' y='4' width='1' height='1'/><rect x='4' y='4' width='2' height='1'/><rect x='2' y='5' width='2' height='1'/><rect x='6' y='5' width='1' height='1'/><rect x='2' y='6' width='1' height='1'/><rect x='6' y='6' width='1' height='1'/><rect x='2' y='7' width='1' height='1'/><rect x='6' y='7' width='1' height='1'/><rect x='2' y='8' width='4' height='1'/></g></svg>">
+<style>
+/* The colours are the kernel's own: the screen's dark blue is 0,40,90, the
+   frames are 255,150,0, the panel inside is 240,240,240, the chat box inside
+   is 232,236,244 and its kernel rows are 0,60,140 — all from src/screen.rs
+   and src/chat.rs. */
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:#001a38;color:#dfe8f4;font:15px/1.75 ui-monospace,"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;-webkit-text-size-adjust:100%}
+.wrap{max-width:46rem;margin:0 auto;padding:4.2rem 16px 3rem}
+header{margin-bottom:2.6rem}
+.wordmark{display:block;width:min(330px,72%);height:auto;color:#fff;margin:0 0 1.6rem}
+.tag{font-size:1.05rem;color:#fff;margin:0 0 .5rem}
+.sub{color:#9db3cf;margin:0 0 1.5rem}
+nav{color:#51719a}
+nav a{white-space:nowrap}
+a{color:#ff9600;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:#ffb75e}
+h2{color:#ff9600;font-size:1rem;letter-spacing:.1em;font-weight:700;margin:3rem 0 1rem}
+h2::before{content:"## ";color:#51719a}
+p{margin:0 0 1rem}
+strong{color:#fff}
+ul{list-style:none;padding:0;margin:0}
+li{padding-left:1.2rem;position:relative;margin-bottom:.9rem}
+li::before{content:"";position:absolute;left:0;top:.64em;width:7px;height:7px;background:#ff9600}
+pre{background:#00223f;border:1px solid #14406f;padding:.9rem 1rem;overflow-x:auto;font-size:.86em;line-height:1.55;margin:1.2rem 0}
+code{font-family:inherit}
+.honest{border-left:3px solid #ff9600;padding:.1rem 0 .1rem 1rem;margin-top:1.4rem}
+/* The screen, drawn with CSS instead of a framebuffer. */
+.screenfig{margin:0}
+.mock{background:#00285a;aspect-ratio:1280/800;border:1px solid #2a568d;border-radius:4px;position:relative;container-type:inline-size;overflow:hidden}
+.mock div{font-size:12px;font-size:max(7.5px,1.75cqi);line-height:1.5}
+.sentence{position:absolute;left:3.2%;top:5%;color:#fff;white-space:nowrap}
+.panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#f0f0f0;border:max(2px,.24em) solid #ff9600;color:#000;padding:.5em 1em;white-space:nowrap}
+.chat{position:absolute;left:3.2%;right:3.2%;bottom:5%;background:#e8ecf4;border:max(2px,.24em) solid #ff9600;padding:.5em .65em;display:flex;flex-direction:column;gap:.3em}
+.chat div{white-space:nowrap;overflow:hidden}
+.k{color:#003c8c}
+.p{color:#000}
+.typing{background:#fff;color:#000;padding:.1em .35em;align-self:stretch}
+figcaption{color:#7f97b6;font-size:.82rem;margin-top:.7rem;line-height:1.6}
+footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#9db3cf;font-size:.9rem}
+.dim{color:#51719a;font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <!-- The word "boos", drawn with the kernel's own letter shapes from
+       src/letters.rs: each rectangle is one dot of a 5-by-9 grid. -->
+  <svg class="wordmark" viewBox="0 0 23 7" role="img" aria-label="boos" fill="currentColor" shape-rendering="crispEdges">
+    <rect x="0" y="0" width="1" height="1"/><rect x="0" y="1" width="1" height="1"/>
+    <rect x="0" y="2" width="1" height="1"/><rect x="2" y="2" width="2" height="1"/>
+    <rect x="0" y="3" width="2" height="1"/><rect x="4" y="3" width="1" height="1"/>
+    <rect x="0" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/>
+    <rect x="0" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/>
+    <rect x="0" y="6" width="4" height="1"/>
+    <rect x="7" y="2" width="3" height="1"/>
+    <rect x="6" y="3" width="1" height="1"/><rect x="10" y="3" width="1" height="1"/>
+    <rect x="6" y="4" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/>
+    <rect x="6" y="5" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/>
+    <rect x="7" y="6" width="3" height="1"/>
+    <rect x="13" y="2" width="3" height="1"/>
+    <rect x="12" y="3" width="1" height="1"/><rect x="16" y="3" width="1" height="1"/>
+    <rect x="12" y="4" width="1" height="1"/><rect x="16" y="4" width="1" height="1"/>
+    <rect x="12" y="5" width="1" height="1"/><rect x="16" y="5" width="1" height="1"/>
+    <rect x="13" y="6" width="3" height="1"/>
+    <rect x="19" y="2" width="4" height="1"/>
+    <rect x="18" y="3" width="1" height="1"/>
+    <rect x="19" y="4" width="3" height="1"/>
+    <rect x="22" y="5" width="1" height="1"/>
+    <rect x="18" y="6" width="4" height="1"/>
+  </svg>
+  <p class="tag"><strong>The beginning of an operating system where a model makes the apps.</strong></p>
+  <p class="sub">Its kernel is written from nothing in Rust, for x86-64 PCs. The firmware loads it directly — there is no bootloader in between.</p>
+  <nav><a href="#idea">the idea</a> · <a href="#today">what it does</a> · <a href="#written">how it is written</a> · <a href="#run">run it</a> · <a href="https://github.com/borisandreipavel-a11y/boos">source</a></nav>
+</header>
+
+<figure class="screenfig">
+  <div class="mock" role="img" aria-label="The screen boos paints: a white sentence on dark blue, a light panel with an orange frame reading Hello from a Lua script, and a chat box along the bottom.">
+    <div class="sentence">Hello from my kernel! I draw my own letters now.</div>
+    <div class="panel">Hello from a Lua script!!!</div>
+    <div class="chat" aria-hidden="true">
+      <div class="k">Kernel: type a line and press Enter.</div>
+      <div class="p">You: Hello, World!?</div>
+      <div class="k">Kernel: you said "Hello, World!?"</div>
+      <div class="typing">_</div>
+    </div>
+  </div>
+  <figcaption>What the kernel paints today, drawn here with its own colours and words. The real thing runs in QEMU. The cursor does not blink there either.</figcaption>
+</figure>
+
+<section id="idea">
+<h2>The idea</h2>
+<p><strong>You do not install apps. You ask for one, and a model writes it.</strong></p>
+<p>A small kernel that is always on does the fast, exact work: sharing the processor and the memory, keeping apps apart, talking to devices. A model does the slow, clever work: it writes the app you asked for. It is not part of the kernel; it is reached over the internet.</p>
+<p>What the model writes is a script, plain text. It runs locked in a box, where it can ask the kernel for a few things and touch nothing else. A clumsy app — one that never ends, or eats its memory — is stopped, and the kernel carries on.</p>
+<pre>kernel                  shares the processor and the memory, talks to devices
+└─ the box              WebAssembly: keeps everything inside locked in
+   └─ the interpreter   understands Lua
+      └─ an app         a script, as a person would write it</pre>
+<p class="honest"><strong>The last step is not built yet: no app is written on request.</strong> What is built is the ground under the idea, piece by piece — each piece tested, and explained in plain words.</p>
+</section>
+
+<section id="today">
+<h2>What it does today</h2>
+<ul>
+<li><strong>Starts itself.</strong> The firmware loads the kernel's file, the kernel asks it for the memory map and the screen, and then tells it to step aside.</li>
+<li><strong>Owns the machine.</strong> Its own interrupt table, its own page tables, a pile of free frames, a heap, and tasks that take turns under the timer.</li>
+<li><strong>Draws everything.</strong> Letters drawn by hand as small grids of dots, a panel, a chat box to type in. The word at the top of this page is drawn with those shapes.</li>
+<li><strong>Speaks to the world.</strong> Its own network driver. It is given an address, looks up a name, and fetches a page over an encrypted link — the site's certificate checked against trusted roots the kernel carries.</li>
+<li><strong>Keeps things.</strong> Its own disk driver, its own part of a divided disk, and a notebook of named things where nothing already written is ever changed.</li>
+<li><strong>Locks apps in.</strong> An app is a WebAssembly program in a box: checked against the rules before it runs, with a limit on its memory and a budget of steps. A clumsy app is stopped; the kernel carries on.</li>
+<li><strong>Understands Lua.</strong> It carries an interpreter that itself runs inside the box, and hands it a script — so a script's mistake stays locked in too.</li>
+<li><strong>Asks a model.</strong> Type <code>ask</code> in the chat box and one fixed question goes to a model over the encrypted link, with a key you typed that shows as stars. The real provider has answered it: in a run with a real key, the model's answer appeared in the chat box.</li>
+</ul>
+</section>
+
+<section id="written">
+<h2>How it is written</h2>
+<ul>
+<li><strong>To be read.</strong> Plain words, small files, one topic per file, and a comment above every unusual step saying why. A device "signal" is an interrupt; a "frame" is 4096 bytes of real memory.</li>
+<li><strong>Owned.</strong> Four pieces of outside code — <a href="https://crates.io/crates/smoltcp">smoltcp</a> for the network stack, <a href="https://crates.io/crates/rustls">rustls</a> with the arithmetic crates for the encrypted link, <a href="https://crates.io/crates/wasmi">wasmi</a> for the box, <a href="https://crates.io/crates/omnilua">omnilua</a> for Lua — each one read and trialled before it came in. Everything else is written for this kernel. Building it runs no build script and uses no macro crate.</li>
+<li><strong>With notes kept true.</strong> <a href="https://github.com/borisandreipavel-a11y/boos/tree/master/docs">docs/</a> holds what the code cannot say for itself: the order things must happen in, what was tested and what was not, and the known limits.</li>
+</ul>
+</section>
+
+<section id="run">
+<h2>Run it</h2>
+<p>Windows, stable Rust, QEMU — and one script:</p>
+<pre><code>git clone https://github.com/borisandreipavel-a11y/boos
+cd boos
+.\run.bat</code></pre>
+<p>The <a href="https://github.com/borisandreipavel-a11y/boos#run-it">README</a> walks through the setup, and says plainly what a run does: the first build fetches the outside crates, every start reaches the internet once, and the first run makes a small disk file next to <code>run.bat</code>.</p>
+</section>
+
+<footer>
+<p>It runs in QEMU. It has never run on real hardware. Said plainly, because a list of what works is only half the picture — the <a href="https://github.com/borisandreipavel-a11y/boos#what-it-cannot-do">rest of that list</a> is in the README.</p>
+<p><a href="https://github.com/borisandreipavel-a11y/boos">Source, notes and history on GitHub</a></p>
+<p class="dim">boosai.tech</p>
+</footer>
+
+</div>
+</body>
+</html>
