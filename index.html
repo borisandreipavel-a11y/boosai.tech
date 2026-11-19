@@ -51,6 +51,28 @@ code{font-family:inherit}
 .p{color:#000}
 .typing{background:#fff;color:#000;padding:.1em .35em;align-self:stretch}
 figcaption{color:#7f97b6;font-size:.82rem;margin-top:.7rem;line-height:1.6}
+.roadmap-step{margin:0 0 .45rem;color:#fff;font-size:clamp(1.2rem,4vw,1.55rem);line-height:1.35}
+.lane-map{margin:1.5rem 0 0;--wire:#84a5c8}
+.lane-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1rem}
+.lane-name{margin:0 0 .55rem;color:#c4d4e7;font-size:.85rem}
+.milestone{padding:.9rem 1rem 1rem;background:#00223f;border:1px solid #40668c}
+.milestone.current{border-color:#ff9600}
+.milestone .part{margin:0 0 .4rem;color:#adbfda;font-size:.78rem}
+.current .part{color:#ffad3e}
+.milestone h4{margin:0 0 .35rem;color:#fff;font-size:1rem;line-height:1.4}
+.milestone p:last-child{margin:0;font-size:.89rem;line-height:1.55}
+.mobile-lane{display:none}
+/* Each lane continues downward. The left arrow is the extra dependency from part 12 to part 11. */
+.lane-links{grid-column:1/-1;position:relative;height:2.6rem;margin-inline:calc(25% - .25rem);border-inline:2px solid var(--wire)}
+.lane-links::before{content:"";position:absolute;inset:50% 0 auto;border-top:2px solid var(--wire)}
+.lane-links::after{content:"";position:absolute;top:50%;left:50%;width:7px;height:7px;border-left:2px solid var(--wire);border-bottom:2px solid var(--wire);transform:translateY(-3px) rotate(45deg)}
+.lane-map figcaption{color:#adbfda;margin-top:.9rem}
+@media(max-width:35rem){
+  .lane-grid{grid-template-columns:1fr;gap:.65rem}
+  .lane-name,.lane-links{display:none}
+  .mobile-lane{display:inline}
+  .milestone{border-left-width:3px}
+}
 footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#9db3cf;font-size:.9rem}
 .dim{color:#51719a;font-size:.8rem}
 </style>
@@ -86,7 +108,7 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
   </svg>
   <p class="tag"><strong>The beginning of an operating system where a model makes the apps.</strong></p>
   <p class="sub">Its kernel is written from nothing in Rust, for x86-64 PCs. The firmware loads it directly — there is no bootloader in between.</p>
-  <nav><a href="#idea">the idea</a> · <a href="#today">what it does</a> · <a href="#written">how it is written</a> · <a href="#run">run it</a> · <a href="https://github.com/borisandreipavel-a11y/boos">source</a></nav>
+  <nav><a href="#idea">the idea</a> · <a href="#today">what it does</a> · <a href="#roadmap">roadmap</a> · <a href="#written">how it is written</a> · <a href="#run">run it</a> · <a href="https://github.com/borisandreipavel-a11y/boos">source</a></nav>
 </header>
 
 <figure class="screenfig">
@@ -127,6 +149,40 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <li><strong>Understands Lua.</strong> It carries an interpreter that itself runs inside the box, and hands it a script — so a script's mistake stays locked in too.</li>
 <li><strong>Asks a model.</strong> Type <code>ask</code> in the chat box and one fixed question goes to a model over the encrypted link, with a key you typed that shows as stars. The real provider has answered it: in a run with a real key, the model's answer appeared in the chat box.</li>
 </ul>
+</section>
+
+<section id="roadmap" aria-labelledby="roadmap-title">
+<h2 id="roadmap-title">Roadmap</h2>
+<h3 class="roadmap-step">Step 7, part 10</h3>
+<p>The goal of step 7 is to type a request and see the app appear. Once the final onboarding change from part 9 lands, each lane gets its own Git worktree, a separate copy of the code for building and testing. Each part gets one pull request.</p>
+<figure class="lane-map" aria-label="Remaining work on the app creator">
+  <div class="lane-grid">
+    <p class="lane-name"><strong>The look</strong></p>
+    <p class="lane-name"><strong>Apps</strong></p>
+    <article class="milestone current" aria-current="step" aria-label="The look, part 10">
+      <p class="part"><span class="mobile-lane">The look · </span>Part 10 · Current</p>
+      <h4>Pick a look</h4>
+      <p>Choose a preset by number. The screen changes immediately, and the same look returns after a restart.</p>
+    </article>
+    <article class="milestone" aria-label="Apps, part 12">
+      <p class="part"><span class="mobile-lane">Apps · </span>Part 12</p>
+      <h4>Ask for an app</h4>
+      <p>Type a request in chat. The model writes a Lua script, and the kernel runs it in the sandbox.</p>
+    </article>
+    <div class="lane-links" aria-hidden="true"></div>
+    <article class="milestone" aria-label="The look, part 11">
+      <p class="part"><span class="mobile-lane">The look · </span>Part 11</p>
+      <h4>Describe a look</h4>
+      <p>Describe the screen in your own words. The model suggests a look and the kernel checks it before applying it.</p>
+    </article>
+    <article class="milestone" aria-label="Apps, part 13">
+      <p class="part"><span class="mobile-lane">Apps · </span>Part 13</p>
+      <h4>Keep an app</h4>
+      <p>Save the request and its script to disk. After a restart, open the same app without calling the model again.</p>
+    </article>
+  </div>
+  <figcaption>Parts 10 and 12 can start together. Part 11 waits for part 12 to merge because both change how the kernel talks to the model. Parts 11 and 13 can then run in parallel.</figcaption>
+</figure>
 </section>
 
 <section id="written">
