@@ -67,6 +67,27 @@ figcaption{color:#7f97b6;font-size:.82rem;margin-top:.7rem;line-height:1.6}
 .lane-links::before{content:"";position:absolute;inset:50% 0 auto;border-top:2px solid var(--wire)}
 .lane-links::after{content:"";position:absolute;top:50%;left:50%;width:7px;height:7px;border-left:2px solid var(--wire);border-bottom:2px solid var(--wire);transform:translateY(-3px) rotate(45deg)}
 .lane-map figcaption{color:#adbfda;margin-top:.9rem}
+.roadmap-history{margin-top:1.4rem;border:1px solid #40668c;background:#00223f}
+.roadmap-history summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px;padding:.7rem 1rem;color:#ffad3e;font-weight:bold;cursor:pointer;list-style:none}
+.roadmap-history summary::-webkit-details-marker{display:none}
+.roadmap-history summary:hover{background:#083050}
+.roadmap-history summary:focus-visible{outline:2px solid #ffad3e;outline-offset:3px}
+.roadmap-history summary::after{content:"";width:.55rem;height:.55rem;flex:none;border-right:2px solid;border-bottom:2px solid;transform:rotate(45deg)}
+.roadmap-history[open] summary::after{transform:rotate(225deg)}
+.roadmap-history .close-label,.roadmap-history[open] .open-label{display:none}
+.roadmap-history[open] .close-label{display:inline}
+.history-steps{margin:0;padding:1.25rem 1.1rem .25rem 1.65rem;border-top:1px solid #40668c;list-style:none}
+.history-steps>li{margin:0;padding:0 0 1.05rem 1.1rem;border-left:1px solid #51719a}
+.history-steps>li:last-child{border-color:transparent}
+.history-steps>li::before{left:-4px;top:.46rem;background:#adbfda}
+.history-steps>li:last-child::before{background:#ff9600}
+.history-steps h4{margin:0;color:#fff;font-size:1rem}
+.history-steps p{margin:0;font-size:.89rem;line-height:1.55}
+.history-steps .history-status{color:#adbfda;font-size:.78rem}
+.history-parts{margin:.6rem 0 0;padding-left:2.1rem;list-style:decimal}
+.history-parts li{margin:0 0 .45rem;padding:0;font-size:.89rem;line-height:1.55}
+.history-parts li::before{content:none}
+.history-parts li::marker{color:#adbfda}
 @media(max-width:35rem){
   .lane-grid{grid-template-columns:1fr;gap:.65rem}
   .lane-name,.lane-links{display:none}
@@ -159,23 +180,23 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
   <div class="lane-grid">
     <p class="lane-name"><strong>The look</strong></p>
     <p class="lane-name"><strong>Apps</strong></p>
-    <article class="milestone current" aria-current="step" aria-label="The look, part 10">
+    <article id="part-10" class="milestone current" aria-current="step" aria-label="The look, part 10">
       <p class="part"><span class="mobile-lane">The look · </span>Part 10 · Current</p>
       <h4>Pick a look</h4>
       <p>Choose a preset by number. The screen changes immediately, and the same look returns after a restart.</p>
     </article>
-    <article class="milestone" aria-label="Apps, part 12">
+    <article id="part-12" class="milestone" aria-label="Apps, part 12">
       <p class="part"><span class="mobile-lane">Apps · </span>Part 12</p>
       <h4>Ask for an app</h4>
       <p>Type a request in chat. The model writes a Lua script, and the kernel runs it in the sandbox.</p>
     </article>
     <div class="lane-links" aria-hidden="true"></div>
-    <article class="milestone" aria-label="The look, part 11">
+    <article id="part-11" class="milestone" aria-label="The look, part 11">
       <p class="part"><span class="mobile-lane">The look · </span>Part 11</p>
       <h4>Describe a look</h4>
       <p>Describe the screen in your own words. The model suggests a look and the kernel checks it before applying it.</p>
     </article>
-    <article class="milestone" aria-label="Apps, part 13">
+    <article id="part-13" class="milestone" aria-label="Apps, part 13">
       <p class="part"><span class="mobile-lane">Apps · </span>Part 13</p>
       <h4>Keep an app</h4>
       <p>Save the request and its script to disk. After a restart, open the same app without calling the model again.</p>
@@ -183,6 +204,61 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
   </div>
   <figcaption>Parts 10 and 12 can start together. Part 11 waits for part 12 to merge because both change how the kernel talks to the model. Parts 11 and 13 can then run in parallel.</figcaption>
 </figure>
+<details class="roadmap-history">
+  <summary><span class="open-label">Show the full roadmap</span><span class="close-label">Hide the full roadmap</span></summary>
+  <ol class="history-steps" role="list">
+    <li>
+      <p class="history-status">Step 1 · Ongoing</p>
+      <h4>Learn Rust</h4>
+      <p>Each new piece of the kernel doubles as a Rust lesson.</p>
+    </li>
+    <li>
+      <p class="history-status">Step 2 · Done</p>
+      <h4>Set up the workshop</h4>
+      <p>The Rust toolchain builds the kernel on Windows. QEMU provides a virtual PC to boot and test it.</p>
+    </li>
+    <li>
+      <p class="history-status">Step 3 · Done</p>
+      <h4>Boot the first kernel</h4>
+      <p>The firmware hands control to boos. The kernel writes to the serial port, reports processor faults, reads the keyboard, manages memory and uses the timer to switch between tasks.</p>
+    </li>
+    <li>
+      <p class="history-status">Step 4 · Done</p>
+      <h4>Reach the internet</h4>
+      <p>The kernel found its network card and exchanged its first packets. It can now get an address, look up a site by name, check its certificate and fetch a page over HTTPS.</p>
+    </li>
+    <li>
+      <p class="history-status">Step 5 · Done</p>
+      <h4>Give apps a sandbox</h4>
+      <p>A 111-byte WebAssembly app printed a line through the kernel. The sandbox checks each program and caps both its memory and the number of steps it can run.</p>
+    </li>
+    <li>
+      <p class="history-status">Step 6 · Done</p>
+      <h4>Draw on the screen</h4>
+      <p>Starting with the screen memory supplied by the firmware, the kernel drew rectangles, then hand-drawn letters. An app can now ask it to show a message in a panel.</p>
+    </li>
+    <li>
+      <p class="history-status">Step 7 · In progress</p>
+      <h4>Build the app creator</h4>
+      <p>The first eight parts are complete. First-run setup also works across restarts. The current milestone is part 10.</p>
+      <ol class="history-parts" aria-label="Parts of step 7">
+        <li><strong>Chat box.</strong> Type a line on the kernel screen and see its reply.</li>
+        <li><strong>First-run design.</strong> Plan how the system asks for a name, a provider key and a password.</li>
+        <li><strong>Shift key.</strong> Type capital letters and symbols into chat.</li>
+        <li><strong>Disk storage.</strong> Save named entries in the kernel’s notebook and read them after a restart.</li>
+        <li><strong>Script language.</strong> Choose Lua for the apps the model will write.</li>
+        <li><strong>Interpreter trial.</strong> Test Lua interpreters inside the WebAssembly sandbox.</li>
+        <li><strong>Run Lua.</strong> A handwritten script printed a line and displayed its own message on screen.</li>
+        <li><strong>Reach a model.</strong> The kernel sent a fixed question to a real provider and showed the answer in chat.</li>
+        <li><strong>First-run setup.</strong> The system remembers the name and unlocks the saved provider key with a password on later boots. Checking the key with the provider is the remaining change.</li>
+        <li><a href="#part-10">Pick a look</a> · Current</li>
+        <li><a href="#part-11">Describe a look</a> · Planned</li>
+        <li><a href="#part-12">Ask for an app</a> · Planned alongside part 10</li>
+        <li><a href="#part-13">Keep an app</a> · Planned</li>
+      </ol>
+    </li>
+  </ol>
+</details>
 </section>
 
 <section id="written">
