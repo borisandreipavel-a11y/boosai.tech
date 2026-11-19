@@ -52,21 +52,17 @@ code{font-family:inherit}
 .typing{background:#fff;color:#000;padding:.1em .35em;align-self:stretch}
 figcaption{color:#7f97b6;font-size:.82rem;margin-top:.7rem;line-height:1.6}
 .roadmap-step{margin:0 0 .45rem;color:#fff;font-size:clamp(1.2rem,4vw,1.55rem);line-height:1.35}
-.lane-map{margin:1.5rem 0 0;--wire:#84a5c8}
-.lane-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1rem}
-.lane-name{margin:0 0 .55rem;color:#c4d4e7;font-size:.85rem}
-.milestone{padding:.9rem 1rem 1rem;background:#00223f;border:1px solid #40668c}
-.milestone.current{border-color:#ff9600}
-.milestone .part{margin:0 0 .4rem;color:#adbfda;font-size:.78rem}
-.current .part{color:#ffad3e}
-.milestone h4{margin:0 0 .35rem;color:#fff;font-size:1rem;line-height:1.4}
-.milestone p:last-child{margin:0;font-size:.89rem;line-height:1.55}
-.mobile-lane{display:none}
-/* Each lane continues downward. The left arrow is the extra dependency from part 12 to part 11. */
-.lane-links{grid-column:1/-1;position:relative;height:2.6rem;margin-inline:calc(25% - .25rem);border-inline:2px solid var(--wire)}
-.lane-links::before{content:"";position:absolute;inset:50% 0 auto;border-top:2px solid var(--wire)}
-.lane-links::after{content:"";position:absolute;top:50%;left:50%;width:7px;height:7px;border-left:2px solid var(--wire);border-bottom:2px solid var(--wire);transform:translateY(-3px) rotate(45deg)}
-.lane-map figcaption{color:#adbfda;margin-top:.9rem}
+/* One card per track: its story, then what is built now, next and later. */
+.tracks{display:grid;gap:.9rem;margin:1.5rem 0 0}
+.track{padding:.9rem 1rem 1rem;background:#00223f;border:1px solid #40668c}
+.track.active{border-color:#ff9600}
+.track h4{margin:0 0 .15rem;color:#fff;font-size:1rem;line-height:1.4}
+.track .story{margin:0 0 .65rem;color:#adbfda;font-size:.89rem;line-height:1.55}
+.track dl{margin:0;display:grid;grid-template-columns:4.5rem minmax(0,1fr);gap:.3rem .8rem;font-size:.89rem;line-height:1.55}
+.track dt{color:#adbfda}
+.track dt.now{color:#ffad3e}
+.track dd{margin:0}
+.track-note{color:#adbfda;font-size:.89rem;line-height:1.6;margin:1rem 0 0}
 .roadmap-history{margin-top:1.4rem;border:1px solid #40668c;background:#00223f}
 .roadmap-history summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px;padding:.7rem 1rem;color:#ffad3e;font-weight:bold;cursor:pointer;list-style:none}
 .roadmap-history summary::-webkit-details-marker{display:none}
@@ -89,10 +85,8 @@ figcaption{color:#7f97b6;font-size:.82rem;margin-top:.7rem;line-height:1.6}
 .history-parts li::before{content:none}
 .history-parts li::marker{color:#adbfda}
 @media(max-width:35rem){
-  .lane-grid{grid-template-columns:1fr;gap:.65rem}
-  .lane-name,.lane-links{display:none}
-  .mobile-lane{display:inline}
-  .milestone{border-left-width:3px}
+  .track dl{grid-template-columns:1fr;gap:0}
+  .track dd{margin-bottom:.45rem}
 }
 footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#9db3cf;font-size:.9rem}
 .dim{color:#51719a;font-size:.8rem}
@@ -154,8 +148,8 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <pre>kernel                  shares the processor and the memory, talks to devices
 └─ the box              WebAssembly: keeps everything inside locked in
    └─ the interpreter   understands Lua
-      └─ an app         a script, as a person would write it</pre>
-<p class="honest"><strong>The last step is not built yet: no app is written on request.</strong> What is built is the ground under the idea, piece by piece — each piece tested, and explained in plain words.</p>
+      └─ an app         a script, plain text, written by the model</pre>
+<p class="honest"><strong>The last step is built, in its first and simplest form: an app is written on request.</strong> Type <code>make</code> and what you want, and the model writes the app as a script, which the kernel runs once in the box. The app is not kept yet, and it can only show one line and print to the terminal. Under it is the ground the idea stands on, built piece by piece — each piece tested, and explained in plain words.</p>
 </section>
 
 <section id="today">
@@ -169,43 +163,62 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <li><strong>Locks apps in.</strong> An app is a WebAssembly program in a box: checked against the rules before it runs, with a limit on its memory and a budget of steps. A clumsy app is stopped; the kernel carries on.</li>
 <li><strong>Understands Lua.</strong> It carries an interpreter that itself runs inside the box, and hands it a script — so a script's mistake stays locked in too.</li>
 <li><strong>Asks a model.</strong> Type <code>ask</code> in the chat box and one fixed question goes to a model over the encrypted link, with a key you typed that shows as stars. The real provider has answered it: in a run with a real key, the model's answer appeared in the chat box.</li>
+<li><strong>Makes an app on request.</strong> Type <code>make</code> and what you want, such as <code>make a dice that rolls</code>. The model writes a Lua script; the kernel checks it, lists it in the terminal, runs it once in the box, shows the app's line in the panel, and says in one plain sentence how the run went. In a run with a real key, an app the real model wrote appeared on the screen.</li>
 </ul>
 </section>
 
 <section id="roadmap" aria-labelledby="roadmap-title">
 <h2 id="roadmap-title">Roadmap</h2>
-<h3 class="roadmap-step">Step 7, part 10</h3>
-<p>The goal of step 7 is to type a request and see the app appear. Once the final onboarding change from part 9 lands, each lane gets its own Git worktree, a separate copy of the code for building and testing. Each part gets one pull request.</p>
-<figure class="lane-map" aria-label="Remaining work on the app creator">
-  <div class="lane-grid">
-    <p class="lane-name"><strong>The look</strong></p>
-    <p class="lane-name"><strong>Apps</strong></p>
-    <article id="part-10" class="milestone current" aria-current="step" aria-label="The look, part 10">
-      <p class="part"><span class="mobile-lane">The look · </span>Part 10 · Current</p>
-      <h4>Pick a look</h4>
-      <p>Choose a preset by number. The screen changes immediately, and the same look returns after a restart.</p>
-    </article>
-    <article id="part-12" class="milestone" aria-label="Apps, part 12">
-      <p class="part"><span class="mobile-lane">Apps · </span>Part 12</p>
-      <h4>Ask for an app</h4>
-      <p>Type a request in chat. The model writes a Lua script, and the kernel runs it in the sandbox.</p>
-    </article>
-    <div class="lane-links" aria-hidden="true"></div>
-    <article id="part-11" class="milestone" aria-label="The look, part 11">
-      <p class="part"><span class="mobile-lane">The look · </span>Part 11</p>
-      <h4>Describe a look</h4>
-      <p>Describe the screen in your own words. The model suggests a look and the kernel checks it before applying it.</p>
-    </article>
-    <article id="part-13" class="milestone" aria-label="Apps, part 13">
-      <p class="part"><span class="mobile-lane">Apps · </span>Part 13</p>
-      <h4>Keep an app</h4>
-      <p>Save the request and its script to disk. After a restart, open the same app without calling the model again.</p>
-    </article>
-  </div>
-  <figcaption>Parts 10 and 12 can start together. Part 11 waits for part 12 to merge because both change how the kernel talks to the model. Parts 11 and 13 can then run in parallel.</figcaption>
-</figure>
+<h3 class="roadmap-step">Five tracks</h3>
+<p>The goal of the first steps, to type a request and see an app appear, is reached. What comes next is kept as five tracks, each with what is being built now, what comes next and what comes later. Tracks can be built at the same time, each in its own copy of the code (a Git worktree), and every piece lands through a pull request that GitHub builds first.</p>
+<div class="tracks">
+  <article id="track-look" class="track active" aria-label="The Look track">
+    <h4>Look</h4>
+    <p class="story">“The screen looks the way I like, and I change it by asking.”</p>
+    <dl>
+      <dt class="now">Now</dt><dd>Pick the screen's colours from a list. The screen changes at once, and the same look comes back after a restart.</dd>
+      <dt>Next</dt><dd><code>setup</code> brings back the default look. Then describe a look in your own words: the model suggests one, and the kernel checks it before using it. A look holds the colours, the chat box's size and rows, and the size of the letters.</dd>
+      <dt>Later</dt><dd>Drawing: a table in your look, then charts, then free shapes, always inside their panel, in colours the model picks to fit the wish.</dd>
+    </dl>
+  </article>
+  <article id="track-apps" class="track" aria-label="The Apps track">
+    <h4>Apps</h4>
+    <p class="story">“I wish for an app, use it, and it is still there tomorrow.”</p>
+    <dl>
+      <dt>Done</dt><dd>Ask for an app: type <code>make</code> and what you want. The model writes a Lua script, and the kernel runs it in the box.</dd>
+      <dt>Next</dt><dd>Keep an app on the disk, so that it runs again after a restart without being written again. Then apps that take inputs the model fills in.</dd>
+      <dt>Later</dt><dd>Apps as tools the model uses, extends or makes; names the model suggests and you can change; old versions kept; the script out of sight, and a failing app says one plain sentence.</dd>
+    </dl>
+  </article>
+  <article id="track-conversation" class="track" aria-label="The Conversation track">
+    <h4>Conversation</h4>
+    <p class="story">“I just talk; boos understands and acts.”</p>
+    <dl>
+      <dt>Next</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools, such as making an app or changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel.</dd>
+      <dt>Later</dt><dd>It remembers what was said, and asks back when something is missing.</dd>
+    </dl>
+  </article>
+  <article id="track-safety" class="track" aria-label="The Safety track">
+    <h4>Safety</h4>
+    <p class="story">“Nothing gets in or out without my yes.”</p>
+    <dl>
+      <dt>Done</dt><dd>Every change goes through a pull request, and GitHub builds the kernel before it can land.</dd>
+      <dt>Next</dt><dd>GitHub also boots the kernel and runs the tests that need no internet.</dd>
+      <dt>Later</dt><dd>Permissions for each app, asked once and written down. Then tools from outside services, each one only with your yes.</dd>
+    </dl>
+  </article>
+  <article id="track-real-pc" class="track" aria-label="The Real PC track">
+    <h4>Real PC</h4>
+    <p class="story">“boos runs on a real PC.”</p>
+    <dl>
+      <dt>Next</dt><dd>The kernel writes its own lines on the screen, so that a real PC can show them. It starts once the look from a list has landed, because both change the screen.</dd>
+      <dt>Later</dt><dd>A first start on a real laptop from a USB stick, reading only; a driver for a real wired network card; then installing on a disk of its own.</dd>
+    </dl>
+  </article>
+</div>
+<p class="track-note">Where tracks wait on each other: Conversation needs an app that runs, which there now is. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
 <details class="roadmap-history">
-  <summary><span class="open-label">Show the full roadmap</span><span class="close-label">Hide the full roadmap</span></summary>
+  <summary><span class="open-label">Show how it got here</span><span class="close-label">Hide how it got here</span></summary>
   <ol class="history-steps" role="list">
     <li>
       <p class="history-status">Step 1 · Ongoing</p>
@@ -238,9 +251,9 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
       <p>Starting with the screen memory supplied by the firmware, the kernel drew rectangles, then hand-drawn letters. An app can now ask it to show a message in a panel.</p>
     </li>
     <li>
-      <p class="history-status">Step 7 · In progress</p>
+      <p class="history-status">Step 7 · Reached</p>
       <h4>Build the app creator</h4>
-      <p>The first eight parts are complete. First-run setup also works across restarts. The current milestone is part 10.</p>
+      <p>A typed request makes an app appear. The last parts go on in the Look and Apps tracks above.</p>
       <ol class="history-parts" aria-label="Parts of step 7">
         <li><strong>Chat box.</strong> Type a line on the kernel screen and see its reply.</li>
         <li><strong>First-run design.</strong> Plan how the system asks for a name, a provider key and a password.</li>
@@ -250,11 +263,11 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
         <li><strong>Interpreter trial.</strong> Test Lua interpreters inside the WebAssembly sandbox.</li>
         <li><strong>Run Lua.</strong> A handwritten script printed a line and displayed its own message on screen.</li>
         <li><strong>Reach a model.</strong> The kernel sent a fixed question to a real provider and showed the answer in chat.</li>
-        <li><strong>First-run setup.</strong> The system remembers the name and unlocks the saved provider key with a password on later boots. Checking the key with the provider is the remaining change.</li>
-        <li><a href="#part-10">Pick a look</a> · Current</li>
-        <li><a href="#part-11">Describe a look</a> · Planned</li>
-        <li><a href="#part-12">Ask for an app</a> · Planned alongside part 10</li>
-        <li><a href="#part-13">Keep an app</a> · Planned</li>
+        <li><strong>First-run setup.</strong> The system asks for a name, a provider key and a password, checks the key with the provider, and on later boots unlocks the saved key with the password.</li>
+        <li><strong>Pick a look.</strong> In progress in the <a href="#track-look">Look track</a>.</li>
+        <li><strong>Describe a look.</strong> Next in the <a href="#track-look">Look track</a>.</li>
+        <li><strong>Ask for an app.</strong> Type a request in chat; the model writes a Lua script, and the kernel runs it in the box. Done.</li>
+        <li><strong>Keep an app.</strong> Next in the <a href="#track-apps">Apps track</a>.</li>
       </ol>
     </li>
   </ol>
