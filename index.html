@@ -160,13 +160,14 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <li><strong>Draws everything.</strong> Letters drawn by hand as small grids of dots, a panel, a chat box to type in. The word at the top of this page is drawn with those shapes.</li>
 <li><strong>Shows its own lines.</strong> Many PCs have no serial port, so the kernel's lines cover the screen while it starts, and F1 shows them again. A failure is shown on a dark red stop screen, above the lines said before it.</li>
 <li><strong>Picks a look.</strong> Ask for another look, and the model picks one of four — Blue, Night, Paper or Contrast. The whole screen changes at once, and the look is kept on the disk.</li>
-<li><strong>Speaks to the world.</strong> Its own network driver. It is given an address, looks up a name, and fetches a page over an encrypted link — the site's certificate checked against trusted roots the kernel carries.</li>
+<li><strong>Speaks to the world.</strong> Its own network drivers, for a virtio card or one of Intel's 82540EM and 82545EM cards. It is given an address, looks up a name, and fetches a page over an encrypted link — the site's certificate checked against trusted roots the kernel carries.</li>
 <li><strong>Keeps things.</strong> Its own disk driver, its own part of a divided disk, and a notebook of named things where nothing already written is ever changed.</li>
 <li><strong>Starts from one disk.</strong> One disk file holds a start part with the kernel, the way a PC starts, and a part of its own for the notebook. It starts in QEMU and in VirtualBox.</li>
 <li><strong>Locks apps in.</strong> An app is a WebAssembly program in a box: checked against the rules before it runs, with a limit on its memory and a budget of steps. A clumsy app is stopped; the kernel carries on.</li>
 <li><strong>Understands Lua.</strong> It carries an interpreter that itself runs inside the box, and hands it a script — so a script's mistake stays locked in too.</li>
-<li><strong>Talks to a model.</strong> Every line typed in the chat box goes to a model over the encrypted link, with a key you typed that shows as stars; only <code>key</code> and <code>setup</code> stay with the kernel. The model answers in words, or uses one of four tools: make an app, run a kept app, pick a look, turn the page of the panel of apps. In runs with a real key, the real model answered and made apps.</li>
+<li><strong>Talks to a model.</strong> Every line typed in the chat box goes to a model over the encrypted link, with a key you typed that shows as stars; only <code>key</code> and <code>setup</code> stay with the kernel. The model answers in words, or uses one of its tools: make an app, run a kept app, pick a look, turn the page of the panel of apps, draw a table, or forget what was said. It remembers the last 10 lines until the machine is switched off, and when what a tool did matters, the model is told and answers again, at most three times a line. In runs with a real key, the real model answered and made apps.</li>
 <li><strong>Makes an app on request.</strong> Ask in your own words, such as <code>I want a dice that rolls</code>. The model writes a Lua script; the kernel checks it, lists it in the terminal, runs it in the box, shows the app's line in the panel, and says in one plain sentence how the run went. An app that ran to its end is kept on the disk, and a panel near the top left lists the apps kept, five a page, the newest first, there again after a restart. A later wish that fits a kept app can run it again without writing it anew.</li>
+<li><strong>Draws tables.</strong> Ask for a table, and the model describes it in a few lines; the kernel draws it in a frame beside the panel of apps, never over the chat, with columns sized to their contents and colours checked so the letters stay readable.</li>
 </ul>
 </section>
 
@@ -175,22 +176,22 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <h3 class="roadmap-step">Five tracks</h3>
 <p>The goal of the first steps, to ask for an app and see it appear, is reached, and a first test release is out. What comes next is kept as five tracks, each with what is done, what is being built now, what comes next and what comes later. Tracks can be built at the same time, each in its own copy of the code (a Git worktree), and every piece lands through a pull request that GitHub builds first.</p>
 <div class="tracks">
-  <article id="track-look" class="track active" aria-label="The Look track">
+  <article id="track-look" class="track" aria-label="The Look track">
     <h4>Look</h4>
     <p class="story">“The screen looks the way I like, and I change it by asking.”</p>
     <dl>
-      <dt>Done</dt><dd>Pick the screen's colours from a list of four. The screen changes at once, and the same look comes back after a restart. <code>setup</code> brings back the first look.</dd>
-      <dt class="now">Now</dt><dd>Drawing, being planned: the model describes a table, and the kernel draws it in a frame beside the panel of apps, in colours the model picks to fit the wish.</dd>
+      <dt>Done</dt><dd>Pick the screen's colours from a list of four. The screen changes at once, and the same look comes back after a restart. <code>setup</code> brings back the first look. Drawing: the model describes a table, and the kernel draws it in a frame beside the panel of apps, in colours the model picks, checked so the letters stay readable.</dd>
       <dt>Next</dt><dd>Describe a look in your own words: the model suggests one, and the kernel checks it before using it. A look holds the colours, the chat box's size and rows, and the size of the letters.</dd>
       <dt>Later</dt><dd>Charts, then free shapes, always inside their frame; a picture you can change by a wish or by keys.</dd>
     </dl>
   </article>
-  <article id="track-apps" class="track" aria-label="The Apps track">
+  <article id="track-apps" class="track active" aria-label="The Apps track">
     <h4>Apps</h4>
     <p class="story">“I wish for an app, use it, and it is still there tomorrow.”</p>
     <dl>
       <dt>Done</dt><dd>Ask for an app in your own words. The model writes a Lua script, and the kernel runs it in the box. An app that ran to its end is kept on the disk and listed in a panel, and a later wish can run it again.</dd>
-      <dt>Next</dt><dd>Apps that take inputs the model fills in.</dd>
+      <dt class="now">Now</dt><dd>Apps that take inputs the model fills in, being planned.</dd>
+      <dt>Next</dt><dd>Documents downloaded from the internet and kept on the disk, then shown on the screen as pictures you can change.</dd>
       <dt>Later</dt><dd>Apps as tools the model uses, extends or makes; names the model suggests and you can change; old versions kept; the script out of sight, and a failing app says one plain sentence.</dd>
     </dl>
   </article>
@@ -198,10 +199,9 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
     <h4>Conversation</h4>
     <p class="story">“I just talk; boos understands and acts.”</p>
     <dl>
-      <dt>Done</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools: making an app, running a kept one, changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel.</dd>
-      <dt class="now">Now</dt><dd>It remembers the last lines of the conversation, and forgets them when asked.</dd>
-      <dt>Next</dt><dd>It sees what its tools did, so it can say so, fix a mistake, or take a next step.</dd>
-      <dt>Later</dt><dd>Answers that appear word by word as they are written, drawings that appear as they are described, and asking back when something is missing.</dd>
+      <dt>Done</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools: making an app, running a kept one, changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel. It remembers the last lines, forgets them when asked, and sees what its tools did, so it can say so or try again.</dd>
+      <dt class="now">Now</dt><dd>Answers that appear word by word as they are written, being planned.</dd>
+      <dt>Later</dt><dd>Drawings that appear as they are described, and asking back when something is missing.</dd>
     </dl>
   </article>
   <article id="track-safety" class="track" aria-label="The Safety track">
@@ -212,17 +212,16 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
       <dt>Later</dt><dd>Permissions for each app, asked once and written down. Then tools from outside services, each one only with your yes.</dd>
     </dl>
   </article>
-  <article id="track-real-pc" class="track active" aria-label="The Real PC track">
+  <article id="track-real-pc" class="track" aria-label="The Real PC track">
     <h4>Real PC</h4>
     <p class="story">“boos runs on a real PC.”</p>
     <dl>
-      <dt>Done</dt><dd>The kernel writes its own lines on the screen while it starts, F1 shows them again, and a failure is shown on a stop screen, so that a PC without a serial port can show them. A proper boot disk, one disk file that holds the kernel and a part of its own: it starts in QEMU and in VirtualBox, and it is the first release.</dd>
-      <dt class="now">Now</dt><dd>A driver for Intel's e1000 family of network cards, the kind VMware offers and older Intel PCs have.</dd>
+      <dt>Done</dt><dd>The kernel writes its own lines on the screen while it starts, F1 shows them again, and a failure is shown on a stop screen, so that a PC without a serial port can show them. A proper boot disk, one disk file that holds the kernel and a part of its own: it starts in QEMU and in VirtualBox, and it is the first release. A driver for Intel's e1000 network cards, the kind QEMU and VMware play and some older PCs have.</dd>
       <dt>Later</dt><dd>More network cards, such as Realtek's common ones; USB; a first start on a real laptop; then installing on a disk of its own.</dd>
     </dl>
   </article>
 </div>
-<p class="track-note">Where tracks wait on each other: drawing comes after the model sees what its tools did. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
+<p class="track-note">Where tracks wait on each other: apps with inputs, downloads and word-by-word answers build after drawing, because they change the same tools. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
 <details class="roadmap-history">
   <summary><span class="open-label">Show how it got here</span><span class="close-label">Hide how it got here</span></summary>
   <ol class="history-steps" role="list">
