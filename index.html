@@ -166,7 +166,7 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <li><strong>Starts from one disk.</strong> One disk file holds a start part with the kernel, the way a PC starts, and a part of its own for the notebook. It starts in QEMU and in VirtualBox.</li>
 <li><strong>Locks apps in.</strong> An app is a WebAssembly program in a box: checked against the rules before it runs, with a limit on its memory and a budget of steps. A clumsy app is stopped; the kernel carries on.</li>
 <li><strong>Understands Lua.</strong> It carries an interpreter that itself runs inside the box, and hands it a script — so a script's mistake stays locked in too.</li>
-<li><strong>Talks to a model.</strong> Every line typed in the chat box goes to a model over the encrypted link, with a key you typed that shows as stars; only <code>key</code> and <code>setup</code> stay with the kernel. The model answers in words, or uses one of its tools: make an app, run a kept app, pick a look, turn the page of the panel of apps, draw a table, fetch a file from the web, remove a kept file, or forget what was said. It remembers the last 10 lines until the machine is switched off, and when what a tool did matters, the model is told and answers again, at most three times a line. In runs with a real key, the real model answered and made apps.</li>
+<li><strong>Talks to a model.</strong> Every line typed in the chat box goes to a model over the encrypted link, with a key you typed that shows as stars; only <code>key</code> and <code>setup</code> stay with the kernel. The model answers in words, which appear word by word as it writes them, or uses one of its tools: make an app, run a kept app, pick a look, turn the page of the panel of apps, draw a table, fetch a file from the web, remove a kept file, or forget what was said. It remembers the last 10 lines until the machine is switched off, and when what a tool did matters, the model is told and answers again, at most three times a line. In runs with a real key, the real model answered and made apps.</li>
 <li><strong>Makes an app on request.</strong> Ask in your own words, such as <code>I want a dice that rolls</code>. The model writes a Lua script; the kernel checks it, lists it in the terminal, runs it in the box, shows the app's line in the panel, and says in one plain sentence how the run went. An app that ran to its end is kept on the disk, and a panel near the top left lists the apps kept, five a page, the newest first, there again after a restart. A later wish that fits a kept app can run it again without writing it anew. An app can take inputs the model fills in at each run: <code>convert 5 km to miles</code> makes a converter, and a later <code>convert 12 km</code> runs the kept one with 12.</li>
 <li><strong>Draws tables.</strong> Ask for a table, and the model describes it in a few lines; the kernel draws it in a frame beside the panel of apps, never over the chat, with columns sized to their contents and colours checked so the letters stay readable.</li>
 </ul>
@@ -201,8 +201,8 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
     <h4>Conversation</h4>
     <p class="story">“I just talk; boos understands and acts.”</p>
     <dl>
-      <dt>Done</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools: making an app, running a kept one, changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel. It remembers the last lines, forgets them when asked, and sees what its tools did, so it can say so or try again.</dd>
-      <dt class="now">Now</dt><dd>Answers that appear word by word as they are written, built and being tested. A longer line to type into, being planned.</dd>
+      <dt>Done</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools: making an app, running a kept one, changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel. It remembers the last lines, forgets them when asked, and sees what its tools did, so it can say so or try again. Its answers appear word by word as they are written.</dd>
+      <dt class="now">Now</dt><dd>A longer line to type into, being built, and the up key brings back the last line sent.</dd>
       <dt>Later</dt><dd>Drawings that appear as they are described, and asking back when something is missing.</dd>
     </dl>
   </article>
@@ -223,7 +223,7 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
     </dl>
   </article>
 </div>
-<p class="track-note">Where tracks wait on each other: documents join after word-by-word answers, and a downloaded file opened as a document builds after documents, because they change the same files. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
+<p class="track-note">Where tracks wait on each other: a downloaded file opened as a document builds after documents, because they change the same files. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
 <details class="roadmap-history">
   <summary><span class="open-label">Show how it got here</span><span class="close-label">Hide how it got here</span></summary>
   <ol class="history-steps" role="list">
