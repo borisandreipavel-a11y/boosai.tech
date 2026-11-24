@@ -162,13 +162,13 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <li><strong>Picks a look.</strong> Ask for another look, and the model picks one of four — Blue, Night, Paper or Contrast. The whole screen changes at once, and the look is kept on the disk.</li>
 <li><strong>Speaks to the world.</strong> Its own network drivers, for a virtio card or one of Intel's 82540EM and 82545EM cards. It is given an address, looks up a name, and fetches a page over an encrypted link — the site's certificate checked against trusted roots the kernel carries.</li>
 <li><strong>Keeps things.</strong> Its own disk driver, its own part of a divided disk, a notebook of named things where nothing already written is ever changed, and a room for the files it fetched.</li>
-<li><strong>Fetches files.</strong> Ask for a file by its address, and the kernel fetches it over an encrypted link and keeps it on the disk: a PDF, a Word or Excel file, plain text or CSV, of at most 4 MB. It asks you before it contacts a site for the first time, and nothing of a file goes to the model.</li>
+<li><strong>Fetches files.</strong> Ask for a file by its address, and the kernel fetches it over an encrypted link and keeps it on the disk: a PDF, a Word or Excel file, plain text or CSV, of at most 4 MB. It asks you before it contacts a site for the first time. A kept CSV file can be opened as a table; only then does its text, at most its first 64 KB, go to the model.</li>
 <li><strong>Starts from one disk.</strong> One disk file holds a start part with the kernel, the way a PC starts, and a part of its own for the notebook. It starts in QEMU and in VirtualBox.</li>
 <li><strong>Locks apps in.</strong> An app is a WebAssembly program in a box: checked against the rules before it runs, with a limit on its memory and a budget of steps. A clumsy app is stopped; the kernel carries on.</li>
 <li><strong>Understands Lua.</strong> It carries an interpreter that itself runs inside the box, and hands it a script — so a script's mistake stays locked in too.</li>
-<li><strong>Talks to a model.</strong> Every line typed in the chat box goes to a model over the encrypted link, with a key you typed that shows as stars; only <code>key</code> and <code>setup</code> stay with the kernel. The model answers in words, which appear word by word as it writes them, or uses one of its tools: make an app, run a kept app, pick a look, turn the page of the panel of apps, draw a table, fetch a file from the web, remove a kept file, or forget what was said. It remembers the last 10 lines until the machine is switched off, and when what a tool did matters, the model is told and answers again, at most three times a line. In runs with a real key, the real model answered and made apps.</li>
+<li><strong>Talks to a model.</strong> Every line typed in the chat box goes to a model over the encrypted link, with a key you typed that shows as stars; only <code>key</code> and <code>setup</code> stay with the kernel. The model answers in words, which appear word by word as it writes them, or uses one of its tools: make an app, run a kept app, pick a look, turn the page of the panel of apps, draw a table, open a kept table again, fetch a file from the web, open a kept CSV file as a table, remove a kept file, or forget what was said. A line holds up to 200 signs, edited with the arrows, and the up key brings back the last line sent. It remembers the last 10 lines until the machine is switched off, and when what a tool did matters, the model is told and answers again, at most three times a line. In runs with a real key, the real model answered and made apps.</li>
 <li><strong>Makes an app on request.</strong> Ask in your own words, such as <code>I want a dice that rolls</code>. The model writes a Lua script; the kernel checks it, lists it in the terminal, runs it in the box, shows the app's line in the panel, and says in one plain sentence how the run went. An app that ran to its end is kept on the disk, and a panel near the top left lists the apps kept, five a page, the newest first, there again after a restart. A later wish that fits a kept app can run it again without writing it anew. An app can take inputs the model fills in at each run: <code>convert 5 km to miles</code> makes a converter, and a later <code>convert 12 km</code> runs the kept one with 12.</li>
-<li><strong>Draws tables.</strong> Ask for a table, and the model describes it in a few lines; the kernel draws it in a frame beside the panel of apps, never over the chat, with columns sized to their contents and colours checked so the letters stay readable.</li>
+<li><strong>Draws tables.</strong> Ask for a table, and the model describes it in a few lines; the kernel draws it in a frame beside the panel of apps, never over the chat, with columns sized to their contents and colours checked so the letters stay readable. Every table is kept on the disk as a document, listed in a panel, and a wish can open it again or change it.</li>
 </ul>
 </section>
 
@@ -177,22 +177,20 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
 <h3 class="roadmap-step">Five tracks</h3>
 <p>The goal of the first steps, to ask for an app and see it appear, is reached, and a first test release is out. What comes next is kept as five tracks, each with what is done, what is being built now, what comes next and what comes later. Tracks can be built at the same time, each in its own copy of the code (a Git worktree), and every piece lands through a pull request that GitHub builds first.</p>
 <div class="tracks">
-  <article id="track-look" class="track active" aria-label="The Look track">
+  <article id="track-look" class="track" aria-label="The Look track">
     <h4>Look</h4>
     <p class="story">“The screen looks the way I like, and I change it by asking.”</p>
     <dl>
-      <dt>Done</dt><dd>Pick the screen's colours from a list of four. The screen changes at once, and the same look comes back after a restart. <code>setup</code> brings back the first look. Drawing: the model describes a table, and the kernel draws it in a frame beside the panel of apps, in colours the model picks, checked so the letters stay readable.</dd>
-      <dt class="now">Now</dt><dd>Documents: a table the model drew is kept on the disk, listed in a panel, opened again and changed by a wish, being built.</dd>
+      <dt>Done</dt><dd>Pick the screen's colours from a list of four. The screen changes at once, and the same look comes back after a restart. <code>setup</code> brings back the first look. Drawing: the model describes a table, and the kernel draws it in a frame beside the panel of apps, in colours the model picks, checked so the letters stay readable. Every table is kept as a document, opened again and changed by a wish.</dd>
       <dt>Next</dt><dd>Describe a look in your own words: the model suggests one, and the kernel checks it before using it. A look holds the colours, the chat box's size and rows, and the size of the letters.</dd>
       <dt>Later</dt><dd>Charts, then free shapes, always inside their frame; a picture you can change by a wish or by keys.</dd>
     </dl>
   </article>
-  <article id="track-apps" class="track active" aria-label="The Apps track">
+  <article id="track-apps" class="track" aria-label="The Apps track">
     <h4>Apps</h4>
     <p class="story">“I wish for an app, use it, and it is still there tomorrow.”</p>
     <dl>
-      <dt>Done</dt><dd>Ask for an app in your own words. The model writes a Lua script, and the kernel runs it in the box. An app that ran to its end is kept on the disk and listed in a panel, and a later wish can run it again. Apps take inputs the model fills in, such as the distance a converter converts. Files fetched from the web are kept on the disk.</dd>
-      <dt class="now">Now</dt><dd>A downloaded file opened as a document you can see and change, being planned.</dd>
+      <dt>Done</dt><dd>Ask for an app in your own words. The model writes a Lua script, and the kernel runs it in the box. An app that ran to its end is kept on the disk and listed in a panel, and a later wish can run it again. Apps take inputs the model fills in, such as the distance a converter converts. Files fetched from the web are kept on the disk, and a kept CSV file opens as a table.</dd>
       <dt>Next</dt><dd>More kinds of file opened as documents: PDF, Word and Excel.</dd>
       <dt>Later</dt><dd>Apps as tools the model uses, extends or makes; names the model suggests and you can change; old versions kept; the script out of sight, and a failing app says one plain sentence.</dd>
     </dl>
@@ -201,8 +199,8 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
     <h4>Conversation</h4>
     <p class="story">“I just talk; boos understands and acts.”</p>
     <dl>
-      <dt>Done</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools: making an app, running a kept one, changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel. It remembers the last lines, forgets them when asked, and sees what its tools did, so it can say so or try again. Its answers appear word by word as they are written.</dd>
-      <dt class="now">Now</dt><dd>A longer line to type into, being built, and the up key brings back the last line sent.</dd>
+      <dt>Done</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools: making an app, running a kept one, changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel. It remembers the last lines, forgets them when asked, and sees what its tools did, so it can say so or try again. Its answers appear word by word as they are written. A line holds up to 200 signs, edited with the arrows, and the up key brings back the last line sent.</dd>
+      <dt class="now">Now</dt><dd>A second provider to choose at the first start, Anthropic's models beside today's, being built.</dd>
       <dt>Later</dt><dd>Drawings that appear as they are described, and asking back when something is missing.</dd>
     </dl>
   </article>
@@ -210,7 +208,7 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
     <h4>Safety</h4>
     <p class="story">“Nothing gets in or out without my yes.”</p>
     <dl>
-      <dt>Done</dt><dd>Every change goes through a pull request. GitHub builds the kernel, then boots it on three machines and runs the tests a change needs, and every test after each merge.</dd>
+      <dt>Done</dt><dd>Every change goes through a pull request. GitHub builds the kernel, then boots it on four machines and runs the tests a change needs, with only that change's own deliberate bugs, and every test after each merge.</dd>
       <dt>Later</dt><dd>Permissions for each app, asked once and written down. Then tools from outside services, each one only with your yes.</dd>
     </dl>
   </article>
@@ -223,7 +221,7 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
     </dl>
   </article>
 </div>
-<p class="track-note">Where tracks wait on each other: a downloaded file opened as a document builds after documents, because they change the same files. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
+<p class="track-note">Where tracks wait on each other: PDFs open as documents only with the second provider, since today's provider does not say that it takes files. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
 <details class="roadmap-history">
   <summary><span class="open-label">Show how it got here</span><span class="close-label">Hide how it got here</span></summary>
   <ol class="history-steps" role="list">
