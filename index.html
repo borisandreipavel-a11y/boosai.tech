@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>boos — an operating system where a model makes the apps</title>
-<meta name="description" content="You do not install apps. You ask for one, and a model writes it. boos is the beginning of that operating system: a kernel written from nothing in Rust, for x86-64 PCs, with no bootloader underneath.">
+<meta name="description" content="You do not install apps. You ask for one, and a model writes it. boos is a kernel written from nothing in Rust, for x86-64 PCs.">
 <link rel="canonical" href="https://boosai.tech/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="boos — an operating system where a model makes the apps">
@@ -19,26 +19,24 @@
    and src/chat.rs. */
 *{box-sizing:border-box}
 html{color-scheme:dark}
-body{margin:0;background:#001a38;color:#dfe8f4;font:15px/1.75 ui-monospace,"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;-webkit-text-size-adjust:100%}
-.wrap{max-width:46rem;margin:0 auto;padding:4.2rem 16px 3rem}
-header{margin-bottom:2.6rem}
-.wordmark{display:block;width:min(330px,72%);height:auto;color:#fff;margin:0 0 1.6rem}
-.tag{font-size:1.05rem;color:#fff;margin:0 0 .5rem}
-.sub{color:#9db3cf;margin:0 0 1.5rem}
-nav{color:#51719a}
-nav a{white-space:nowrap}
+body{margin:0;background:#001a38;color:#dfe8f4;font:15px/1.7 ui-monospace,"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;-webkit-text-size-adjust:100%}
+.wrap{max-width:46rem;margin:0 auto;padding:4rem 16px 3rem}
+header{margin-bottom:2.2rem}
+.wordmark{display:block;width:min(300px,68%);height:auto;color:#fff;margin:0 0 1.5rem}
+.tag{font-size:clamp(1.1rem,3.6vw,1.35rem);line-height:1.45;color:#fff;margin:0 0 .6rem;font-weight:700}
+.sub{color:#9db3cf;margin:0 0 1.6rem}
+.buttons{display:flex;flex-wrap:wrap;gap:.7rem}
+.btn{display:inline-block;padding:.6rem 1.1rem;border:1px solid #ff9600;text-decoration:none;font-weight:700}
+.btn.main{background:#ff9600;color:#001a38}
+.btn.main:hover{background:#ffb75e;color:#001a38}
 a{color:#ff9600;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 a:hover{color:#ffb75e}
 h2{color:#ff9600;font-size:1rem;letter-spacing:.1em;font-weight:700;margin:3rem 0 1rem}
 h2::before{content:"## ";color:#51719a}
 p{margin:0 0 1rem}
 strong{color:#fff}
-ul{list-style:none;padding:0;margin:0}
-li{padding-left:1.2rem;position:relative;margin-bottom:.9rem}
-li::before{content:"";position:absolute;left:0;top:.64em;width:7px;height:7px;background:#ff9600}
-pre{background:#00223f;border:1px solid #14406f;padding:.9rem 1rem;overflow-x:auto;font-size:.86em;line-height:1.55;margin:1.2rem 0}
+pre{background:#00223f;border:1px solid #14406f;padding:.9rem 1rem;overflow-x:auto;font-size:.86em;line-height:1.55;margin:1rem 0}
 code{font-family:inherit}
-.honest{border-left:3px solid #ff9600;padding:.1rem 0 .1rem 1rem;margin-top:1.4rem}
 /* The screen, drawn with CSS instead of a framebuffer. */
 .screenfig{margin:0}
 .mock{background:#00285a;aspect-ratio:1280/800;border:1px solid #2a568d;border-radius:4px;position:relative;container-type:inline-size;overflow:hidden}
@@ -50,46 +48,21 @@ code{font-family:inherit}
 .k{color:#003c8c}
 .p{color:#000}
 .typing{background:#fff;color:#000;padding:.1em .35em;align-self:stretch}
-figcaption{color:#7f97b6;font-size:.82rem;margin-top:.7rem;line-height:1.6}
-.roadmap-step{margin:0 0 .45rem;color:#fff;font-size:clamp(1.2rem,4vw,1.55rem);line-height:1.35}
-/* One card per track: its story, then what is built now, next and later. */
-.tracks{display:grid;gap:.9rem;margin:1.5rem 0 0}
-.track{padding:.9rem 1rem 1rem;background:#00223f;border:1px solid #40668c}
-.track.active{border-color:#ff9600}
-.track h4{margin:0 0 .15rem;color:#fff;font-size:1rem;line-height:1.4}
-.track .story{margin:0 0 .65rem;color:#adbfda;font-size:.89rem;line-height:1.55}
-.track dl{margin:0;display:grid;grid-template-columns:4.5rem minmax(0,1fr);gap:.3rem .8rem;font-size:.89rem;line-height:1.55}
-.track dt{color:#adbfda}
-.track dt.now{color:#ffad3e}
-.track dd{margin:0}
-.track-note{color:#adbfda;font-size:.89rem;line-height:1.6;margin:1rem 0 0}
-.roadmap-history{margin-top:1.4rem;border:1px solid #40668c;background:#00223f}
-.roadmap-history summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px;padding:.7rem 1rem;color:#ffad3e;font-weight:bold;cursor:pointer;list-style:none}
-.roadmap-history summary::-webkit-details-marker{display:none}
-.roadmap-history summary:hover{background:#083050}
-.roadmap-history summary:focus-visible{outline:2px solid #ffad3e;outline-offset:3px}
-.roadmap-history summary::after{content:"";width:.55rem;height:.55rem;flex:none;border-right:2px solid;border-bottom:2px solid;transform:rotate(45deg)}
-.roadmap-history[open] summary::after{transform:rotate(225deg)}
-.roadmap-history .close-label,.roadmap-history[open] .open-label{display:none}
-.roadmap-history[open] .close-label{display:inline}
-.history-steps{margin:0;padding:1.25rem 1.1rem .25rem 1.65rem;border-top:1px solid #40668c;list-style:none}
-.history-steps>li{margin:0;padding:0 0 1.05rem 1.1rem;border-left:1px solid #51719a}
-.history-steps>li:last-child{border-color:transparent}
-.history-steps>li::before{left:-4px;top:.46rem;background:#adbfda}
-.history-steps>li:last-child::before{background:#ff9600}
-.history-steps h4{margin:0;color:#fff;font-size:1rem}
-.history-steps p{margin:0;font-size:.89rem;line-height:1.55}
-.history-steps .history-status{color:#adbfda;font-size:.78rem}
-.history-parts{margin:.6rem 0 0;padding-left:2.1rem;list-style:decimal}
-.history-parts li{margin:0 0 .45rem;padding:0;font-size:.89rem;line-height:1.55}
-.history-parts li::before{content:none}
-.history-parts li::marker{color:#adbfda}
-@media(max-width:35rem){
-  .track dl{grid-template-columns:1fr;gap:0}
-  .track dd{margin-bottom:.45rem}
-}
-footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#9db3cf;font-size:.9rem}
-.dim{color:#51719a;font-size:.8rem}
+footer{margin-top:3rem;border-top:1px solid #14406f;padding-top:1.4rem;color:#9db3cf;font-size:.9rem}
+
+/* Chat exchanges, in the kernel's chat-box colours. */
+.talk{display:grid;gap:.8rem}
+.ex{background:#e8ecf4;border:2px solid #ff9600;padding:.6rem .8rem;color:#000}
+.ex .you{color:#000;font-weight:700}
+.ex .you::before{content:"You: ";font-weight:400;color:#003c8c}
+.ex .did{color:#003c8c;font-size:.9rem;margin-top:.2rem}
+/* Now, next, later. */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:.8rem}
+.col{border-top:3px solid #40668c;padding-top:.5rem}
+.col.now{border-color:#ff9600}
+.col h3{margin:0 0 .4rem;color:#ffad3e;font-size:.95rem;letter-spacing:.08em}
+.col ul{list-style:none;padding:0;margin:0}
+.col li{margin:0 0 .4rem;font-size:.9rem}
 </style>
 </head>
 <body>
@@ -121,9 +94,12 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
     <rect x="22" y="5" width="1" height="1"/>
     <rect x="18" y="6" width="4" height="1"/>
   </svg>
-  <p class="tag"><strong>The beginning of an operating system where a model makes the apps.</strong></p>
-  <p class="sub">Its kernel is written from nothing in Rust, for x86-64 PCs. The firmware loads it directly — there is no bootloader in between.</p>
-  <nav><a href="#idea">the idea</a> · <a href="#today">what it does</a> · <a href="#roadmap">roadmap</a> · <a href="#written">how it is written</a> · <a href="#download">download</a> · <a href="#run">run it</a> · <a href="https://github.com/borisandreipavel-a11y/boos">source</a></nav>
+  <p class="tag">You don't install apps. You ask for one, and a model writes it.</p>
+  <p class="sub">An operating system written from nothing in Rust, for x86-64 PCs. An early test: it runs in QEMU and VirtualBox.</p>
+  <div class="buttons">
+    <a class="btn main" href="#download">Download 0.1.0</a>
+    <a class="btn" href="https://github.com/borisandreipavel-a11y/boos">Source on GitHub</a>
+  </div>
 </header>
 
 <figure class="screenfig">
@@ -137,172 +113,39 @@ footer{margin-top:3.2rem;border-top:1px solid #14406f;padding-top:1.5rem;color:#
       <div class="typing">_</div>
     </div>
   </div>
-  <figcaption>What the kernel paints today, drawn here with its own colours and words. The real thing runs in QEMU and VirtualBox. The cursor does not blink there either.</figcaption>
 </figure>
 
-<section id="idea">
-<h2>The idea</h2>
-<p><strong>You do not install apps. You ask for one, and a model writes it.</strong></p>
-<p>A small kernel that is always on does the fast, exact work: sharing the processor and the memory, keeping apps apart, talking to devices. A model does the slow, clever work: it writes the app you asked for. It is not part of the kernel; it is reached over the internet.</p>
-<p>What the model writes is a script, plain text. It runs locked in a box, where it can ask the kernel for a few things and touch nothing else. A clumsy app — one that never ends, or eats its memory — is stopped, and the kernel carries on.</p>
-<pre>kernel                  shares the processor and the memory, talks to devices
-└─ the box              WebAssembly: keeps everything inside locked in
-   └─ the interpreter   understands Lua
-      └─ an app         a script, plain text, written by the model</pre>
-<p class="honest"><strong>The last step is built, in its first and simplest form: an app is written on request.</strong> What you type in the chat goes to the model, which answers in words or uses a tool: ask for an app in your own words, and the model has it written as a script, which the kernel runs in the box. An app that ran to its end is kept on the disk and listed on the screen, and a later wish that fits it can run it again. It can still only show one line and print to the terminal. Under it is the ground the idea stands on, built piece by piece — each piece tested, and explained in plain words.</p>
-</section>
-
 <section id="today">
-<h2>What it does today</h2>
-<ul>
-<li><strong>Starts itself.</strong> The firmware loads the kernel's file, the kernel asks it for the memory map and the screen, and then tells it to step aside.</li>
-<li><strong>Owns the machine.</strong> Its own interrupt table, its own page tables, a pile of free frames, a heap, and tasks that take turns under the timer.</li>
-<li><strong>Draws everything.</strong> Letters drawn by hand as small grids of dots, a panel, a chat box to type in. The word at the top of this page is drawn with those shapes.</li>
-<li><strong>Shows its own lines.</strong> Many PCs have no serial port, so the kernel's lines cover the screen while it starts, and F1 shows them again. A failure is shown on a dark red stop screen, above the lines said before it.</li>
-<li><strong>Picks a look.</strong> Ask for another look, and the model picks one of four — Blue, Night, Paper or Contrast. The whole screen changes at once, and the look is kept on the disk.</li>
-<li><strong>Speaks to the world.</strong> Its own network drivers, for a virtio card or one of Intel's 82540EM and 82545EM cards. It is given an address, looks up a name, and fetches a page over an encrypted link — the site's certificate checked against trusted roots the kernel carries.</li>
-<li><strong>Keeps things.</strong> Its own disk driver, its own part of a divided disk, a notebook of named things where nothing already written is ever changed, and a room for the files it fetched.</li>
-<li><strong>Fetches files.</strong> Ask for a file by its address, and the kernel fetches it over an encrypted link and keeps it on the disk: a PDF, a Word or Excel file, plain text or CSV, of at most 4 MB. It asks you before it contacts a site for the first time. A kept CSV file can be opened as a table; only then does its text, at most its first 64 KB, go to the model.</li>
-<li><strong>Starts from one disk.</strong> One disk file holds a start part with the kernel, the way a PC starts, and a part of its own for the notebook. It starts in QEMU and in VirtualBox.</li>
-<li><strong>Locks apps in.</strong> An app is a WebAssembly program in a box: checked against the rules before it runs, with a limit on its memory and a budget of steps. A clumsy app is stopped; the kernel carries on.</li>
-<li><strong>Understands Lua.</strong> It carries an interpreter that itself runs inside the box, and hands it a script — so a script's mistake stays locked in too.</li>
-<li><strong>Talks to a model.</strong> Every line typed in the chat box goes to a model over the encrypted link, with a key you typed that shows as stars; only <code>key</code> and <code>setup</code> stay with the kernel. The model answers in words, which appear word by word as it writes them, or uses one of its tools: make an app, run a kept app, pick a look, turn the page of the panel of apps, draw a table, open a kept table again, fetch a file from the web, open a kept CSV file as a table, remove a kept file, or forget what was said. A line holds up to 200 signs, edited with the arrows, and the up key brings back the last line sent. It remembers the last 10 lines until the machine is switched off, and when what a tool did matters, the model is told and answers again, at most three times a line. In runs with a real key, the real model answered and made apps.</li>
-<li><strong>Makes an app on request.</strong> Ask in your own words, such as <code>I want a dice that rolls</code>. The model writes a Lua script; the kernel checks it, lists it in the terminal, runs it in the box, shows the app's line in the panel, and says in one plain sentence how the run went. An app that ran to its end is kept on the disk, and a panel near the top left lists the apps kept, five a page, the newest first, there again after a restart. A later wish that fits a kept app can run it again without writing it anew. An app can take inputs the model fills in at each run: <code>convert 5 km to miles</code> makes a converter, and a later <code>convert 12 km</code> runs the kept one with 12.</li>
-<li><strong>Draws tables.</strong> Ask for a table, and the model describes it in a few lines; the kernel draws it in a frame beside the panel of apps, never over the chat, with columns sized to their contents and colours checked so the letters stay readable. Every table is kept on the disk as a document, listed in a panel, and a wish can open it again or change it.</li>
-</ul>
-</section>
-
-<section id="roadmap" aria-labelledby="roadmap-title">
-<h2 id="roadmap-title">Roadmap</h2>
-<h3 class="roadmap-step">Five tracks</h3>
-<p>The goal of the first steps, to ask for an app and see it appear, is reached, and a first test release is out. What comes next is kept as five tracks, each with what is done, what is being built now, what comes next and what comes later. Tracks can be built at the same time, each in its own copy of the code (a Git worktree), and every piece lands through a pull request that GitHub builds first.</p>
-<div class="tracks">
-  <article id="track-look" class="track" aria-label="The Look track">
-    <h4>Look</h4>
-    <p class="story">“The screen looks the way I like, and I change it by asking.”</p>
-    <dl>
-      <dt>Done</dt><dd>Pick the screen's colours from a list of four. The screen changes at once, and the same look comes back after a restart. <code>setup</code> brings back the first look. Drawing: the model describes a table, and the kernel draws it in a frame beside the panel of apps, in colours the model picks, checked so the letters stay readable. Every table is kept as a document, opened again and changed by a wish.</dd>
-      <dt>Next</dt><dd>Describe a look in your own words: the model suggests one, and the kernel checks it before using it. A look holds the colours, the chat box's size and rows, and the size of the letters.</dd>
-      <dt>Later</dt><dd>Charts, then free shapes, always inside their frame; a picture you can change by a wish or by keys.</dd>
-    </dl>
-  </article>
-  <article id="track-apps" class="track" aria-label="The Apps track">
-    <h4>Apps</h4>
-    <p class="story">“I wish for an app, use it, and it is still there tomorrow.”</p>
-    <dl>
-      <dt>Done</dt><dd>Ask for an app in your own words. The model writes a Lua script, and the kernel runs it in the box. An app that ran to its end is kept on the disk and listed in a panel, and a later wish can run it again. Apps take inputs the model fills in, such as the distance a converter converts. Files fetched from the web are kept on the disk, and a kept CSV file opens as a table.</dd>
-      <dt>Next</dt><dd>More kinds of file opened as documents: PDF, Word and Excel.</dd>
-      <dt>Later</dt><dd>Apps as tools the model uses, extends or makes; names the model suggests and you can change; old versions kept; the script out of sight, and a failing app says one plain sentence.</dd>
-    </dl>
-  </article>
-  <article id="track-conversation" class="track active" aria-label="The Conversation track">
-    <h4>Conversation</h4>
-    <p class="story">“I just talk; boos understands and acts.”</p>
-    <dl>
-      <dt>Done</dt><dd>Every line typed in the chat goes to the model, which answers in words or by using tools: making an app, running a kept one, changing the look. Only <code>key</code> and <code>setup</code> stay with the kernel. It remembers the last lines, forgets them when asked, and sees what its tools did, so it can say so or try again. Its answers appear word by word as they are written. A line holds up to 200 signs, edited with the arrows, and the up key brings back the last line sent.</dd>
-      <dt class="now">Now</dt><dd>A second provider to choose at the first start, Anthropic's models beside today's, being built.</dd>
-      <dt>Later</dt><dd>Drawings that appear as they are described, and asking back when something is missing.</dd>
-    </dl>
-  </article>
-  <article id="track-safety" class="track" aria-label="The Safety track">
-    <h4>Safety</h4>
-    <p class="story">“Nothing gets in or out without my yes.”</p>
-    <dl>
-      <dt>Done</dt><dd>Every change goes through a pull request. GitHub builds the kernel, then boots it on four machines and runs the tests a change needs, with only that change's own deliberate bugs, and every test after each merge.</dd>
-      <dt>Later</dt><dd>Permissions for each app, asked once and written down. Then tools from outside services, each one only with your yes.</dd>
-    </dl>
-  </article>
-  <article id="track-real-pc" class="track" aria-label="The Real PC track">
-    <h4>Real PC</h4>
-    <p class="story">“boos runs on a real PC.”</p>
-    <dl>
-      <dt>Done</dt><dd>The kernel writes its own lines on the screen while it starts, F1 shows them again, and a failure is shown on a stop screen, so that a PC without a serial port can show them. A proper boot disk, one disk file that holds the kernel and a part of its own: it starts in QEMU and in VirtualBox, and it is the first release. A driver for Intel's e1000 network cards, the kind QEMU and VMware play and some older PCs have.</dd>
-      <dt>Later</dt><dd>More network cards, such as Realtek's common ones; USB; a first start on a real laptop; then installing on a disk of its own.</dd>
-    </dl>
-  </article>
+<h2>What you can say to it today</h2>
+<div class="talk">
+  <div class="ex"><div class="you">I want a dice that rolls</div><div class="did">A small app is written, run in a sealed box, and kept for next time.</div></div>
+  <div class="ex"><div class="you">draw a table of the planets</div><div class="did">The table is drawn on the screen and kept as a document.</div></div>
+  <div class="ex"><div class="you">add a column with their moons</div><div class="did">The same table, changed.</div></div>
+  <div class="ex"><div class="you">download example.com/prices.csv and open it</div><div class="did">The file is fetched, kept on the disk and opened as a document you can change.</div></div>
 </div>
-<p class="track-note">Where tracks wait on each other: PDFs open as documents only with the second provider, since today's provider does not say that it takes files. A look described in words and apps as tools need Conversation's tools. Tools from outside services come only after permissions.</p>
-<details class="roadmap-history">
-  <summary><span class="open-label">Show how it got here</span><span class="close-label">Hide how it got here</span></summary>
-  <ol class="history-steps" role="list">
-    <li>
-      <p class="history-status">Step 1 · Done</p>
-      <h4>Set up the workshop</h4>
-      <p>The Rust toolchain builds the kernel on Windows. QEMU provides a virtual PC to boot and test it.</p>
-    </li>
-    <li>
-      <p class="history-status">Step 2 · Done</p>
-      <h4>Boot the first kernel</h4>
-      <p>The firmware hands control to boos. The kernel writes to the serial port, reports processor faults, reads the keyboard, manages memory and uses the timer to switch between tasks.</p>
-    </li>
-    <li>
-      <p class="history-status">Step 3 · Done</p>
-      <h4>Reach the internet</h4>
-      <p>The kernel found its network card and exchanged its first packets. It can now get an address, look up a site by name, check its certificate and fetch a page over HTTPS.</p>
-    </li>
-    <li>
-      <p class="history-status">Step 4 · Done</p>
-      <h4>Give apps a sandbox</h4>
-      <p>A 111-byte WebAssembly app printed a line through the kernel. The sandbox checks each program and caps both its memory and the number of steps it can run.</p>
-    </li>
-    <li>
-      <p class="history-status">Step 5 · Done</p>
-      <h4>Draw on the screen</h4>
-      <p>Starting with the screen memory supplied by the firmware, the kernel drew rectangles, then hand-drawn letters. An app can now ask it to show a message in a panel.</p>
-    </li>
-    <li>
-      <p class="history-status">Step 6 · Reached</p>
-      <h4>Build the app creator</h4>
-      <p>A typed request makes an app appear. The last parts go on in the Look and Apps tracks above.</p>
-      <ol class="history-parts" aria-label="Parts of step 6">
-        <li><strong>Chat box.</strong> Type a line on the kernel screen and see its reply.</li>
-        <li><strong>First-run design.</strong> Plan how the system asks for a name, a provider key and a password.</li>
-        <li><strong>Shift key.</strong> Type capital letters and symbols into chat.</li>
-        <li><strong>Disk storage.</strong> Save named entries in the kernel’s notebook and read them after a restart.</li>
-        <li><strong>Script language.</strong> Choose Lua for the apps the model will write.</li>
-        <li><strong>Interpreter trial.</strong> Test Lua interpreters inside the WebAssembly sandbox.</li>
-        <li><strong>Run Lua.</strong> A handwritten script printed a line and displayed its own message on screen.</li>
-        <li><strong>Reach a model.</strong> The kernel sent a fixed question to a real provider and showed the answer in chat.</li>
-        <li><strong>First-run setup.</strong> The system asks for a name, a provider key and a password, checks the key with the provider, and on later boots unlocks the saved key with the password.</li>
-        <li><strong>Pick a look.</strong> Pick one of four looks; the whole screen changes at once. Done.</li>
-        <li><strong>Describe a look.</strong> Next in the <a href="#track-look">Look track</a>.</li>
-        <li><strong>Ask for an app.</strong> Type a request in chat; the model writes a Lua script, and the kernel runs it in the box. Done.</li>
-        <li><strong>Keep an app.</strong> An app that ran to its end is kept on the disk and listed in a panel. Done.</li>
-      </ol>
-    </li>
-  </ol>
-</details>
 </section>
 
-<section id="written">
-<h2>How it is written</h2>
-<ul>
-<li><strong>To be read.</strong> Plain words, small files, one topic per file, and a comment above every unusual step saying why. A device "signal" is an interrupt; a "frame" is 4096 bytes of real memory.</li>
-<li><strong>Owned.</strong> Four pieces of outside code — <a href="https://crates.io/crates/smoltcp">smoltcp</a> for the network stack, <a href="https://crates.io/crates/rustls">rustls</a> with the arithmetic crates for the encrypted link, <a href="https://crates.io/crates/wasmi">wasmi</a> for the box, <a href="https://crates.io/crates/omnilua">omnilua</a> for Lua — each one read and trialled before it came in. Everything else is written for this kernel. Building it runs no build script and uses no macro crate.</li>
-<li><strong>Free to use.</strong> The project's own code is under the MIT licence or the Apache License 2.0, whichever you choose. The outside code keeps its own licences.</li>
-<li><strong>With notes kept true.</strong> <a href="https://github.com/borisandreipavel-a11y/boos/tree/master/docs">docs/</a> holds what the code cannot say for itself: the order things must happen in, what was tested and what was not, and the known limits.</li>
-</ul>
+<section id="roadmap">
+<h2>What comes next</h2>
+<div class="cols">
+  <div class="col now"><h3>NOW</h3><ul><li>Pictures in documents</li></ul></div>
+  <div class="col"><h3>NEXT</h3><ul><li>Charts</li><li>The look, changed by asking</li></ul></div>
+  <div class="col"><h3>LATER</h3><ul><li>Apps that ask once for what they may do</li><li>A real PC</li></ul></div>
+</div>
 </section>
 
 <section id="download">
 <h2>Download</h2>
-<p><strong>boos 0.1.0 is out, as an early test.</strong> Get <code>boos-0.1.0.zip</code> from <a href="https://github.com/borisandreipavel-a11y/boos/releases/tag/v0.1.0">its release page on GitHub</a>. It holds a ready disk for VirtualBox (<code>boot.vdi</code>), the same disk for QEMU (<code>boot.img</code>), the licences and the notices. The release page says how to start it in either, and gives the zip's checksum.</p>
-<p>Anything the model does needs a key of your own from the provider, OrcaRouter, since what you type in the chat goes to the model and is paid for with that key. You can sign up through <a href="https://www.orcarouter.ai/ref/ref_3f5501c7dd1f98cb4f25">the author's referral link</a>, which earns the author a share of what you spend there, or directly at <a href="https://www.orcarouter.ai">orcarouter.ai</a>. After use, the disk holds the name you gave and your key, locked with your password, so pass on the download, not your disk.</p>
-</section>
-
-<section id="run">
-<h2>Run it</h2>
-<p>To build it yourself: Windows, stable Rust, QEMU — and one script:</p>
+<p><strong>boos 0.1.0</strong> is an early test: a ready disk for VirtualBox and QEMU. Get it from <a href="https://github.com/borisandreipavel-a11y/boos/releases/tag/v0.1.0">the release page</a>, which says how to start it.</p>
+<p>The model needs a key of your own from OrcaRouter (<a href="https://www.orcarouter.ai/ref/ref_3f5501c7dd1f98cb4f25">the author's referral link</a>, or <a href="https://www.orcarouter.ai">orcarouter.ai</a>). Pass on the download, not a used disk: it holds your locked key.</p>
+<p>To build the newest code yourself, with Windows, Rust and QEMU:</p>
 <pre><code>git clone https://github.com/borisandreipavel-a11y/boos
 cd boos
 .\run.bat</code></pre>
-<p>The <a href="https://github.com/borisandreipavel-a11y/boos#run-it">README</a> walks through the setup, and says plainly what a run does: the first build fetches the outside crates, every start reaches the internet once, and the first run makes a small disk file next to <code>run.bat</code>.</p>
 </section>
 
 <footer>
-<p>It runs in QEMU and VirtualBox. It has never run on real hardware. Said plainly, because a list of what works is only half the picture — the <a href="https://github.com/borisandreipavel-a11y/boos#what-it-cannot-do">rest of that list</a> is in the README.</p>
-<p><a href="https://github.com/borisandreipavel-a11y/boos">Source, notes and history on GitHub</a></p>
-<p class="dim">boosai.tech</p>
+<p>Never run on real hardware yet. The <a href="https://github.com/borisandreipavel-a11y/boos#readme">README</a> has the details and the limits. MIT or Apache-2.0.</p>
 </footer>
 
 </div>
